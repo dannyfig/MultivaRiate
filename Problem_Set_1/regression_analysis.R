@@ -31,10 +31,11 @@ read_v_write <- ggplot(df) +
                  y = y_axis)) +
   labs(x = "Critical Reading Score", y = "Writing Average Score") +
   xlim(200, 800) + ylim(200, 800)
+
 read_v_write
 
 # Save our plot
-ggsave(read_v_write, filename = "read_v_write.png")
+ggsave(read_v_write, filename = "read_v_write_2012.png")
 
 # Explore any outliers in our data
 # Click on a point to identify it, the press `esc' to return all points clicked
@@ -100,7 +101,7 @@ regplot.confbands.fun <- function(x, y, confidencelevel= .95, CImean = TRUE,
 }
 
 # Open png graphics device to save our fitted line plot
-png(filename = "fitted_line_plot.png")
+png(filename = "fitted_line_plot_2012.png")
 
 # Determine fitted line plot for x_axis and y_axis
 regplot.confbands.fun(x_axis, y_axis)
@@ -116,7 +117,7 @@ predict(regression, new_read_v_write, interval = c("confidence"))
 predict(regression, new_read_v_write, interval = c("prediction"))
 
 # Open png graphics device to save our fitted line plot
-png(filename = "fitted_vs_residual.png")
+png(filename = "fitted_vs_residual_2012.png")
 
 # Plot our fitted values vs residuals
 plot(fitted(regression), residuals(new_read_v_write), 
@@ -126,7 +127,7 @@ plot(fitted(regression), residuals(new_read_v_write),
 dev.off()
 
 # Open png graphics device to save our fitted line plot
-png(filename = "qq.png")
+png(filename = "qq_2012.png")
 
 # Generate normal Q-Q plot
 qqnorm(residuals(regression))
