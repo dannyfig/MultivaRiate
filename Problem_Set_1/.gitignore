@@ -1,1 +1,6 @@
 *.iml
+*.xml
+*.aux
+*.log
+*.out
+*.tex

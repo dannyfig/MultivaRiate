@@ -1,5 +1,5 @@
 # Author: Danny Vilela
-# Date: 29 February 2016
+# Date: 2 March 2016
 #   This script will serve to clean, validate, and filter the values that are
 #   relevant for the simple linear regression task.
 #
@@ -9,7 +9,7 @@ require(ggplot2)
 require(car)
 
 # Read in our NYC SAT dataset
-df <- read.csv("SAT_Results.csv", header = TRUE)
+df <- read.csv("SAT_Results_2012.csv", header = TRUE)
 
 # Convert our CSV to a data frame and attach it to our session
 df <- data.frame(df)
@@ -38,8 +38,8 @@ ggsave(read_v_write, filename = "read_v_write.png")
 
 # Explore any outliers in our data
 # Click on a point to identify it, the press `esc' to return all points clicked
-print("Press the escape key once you're done choosing points to be identified.")
-identify(x_axis, y_axis)
+#print("Press the escape key once you're done choosing points to be identified.")
+#identify(x_axis, y_axis)
 
 # Fit our linear regression model and output the summary statistics
 regression <- lm(y_axis ~ x_axis)
