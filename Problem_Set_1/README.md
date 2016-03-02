@@ -6,11 +6,11 @@ at least 30 data values. Analyze the data in a full and appropriate fashion usin
 and discuss what you find.
 
 #### Summary
-I gathered my data using [NYC Open Data](https://data.cityofnewyork.us/) and specifically sourced a [dataset](https://data.cityofnewyork.us/Education/SAT-College-Board-2010-School-Level-Results/zt9s-n5aj) 
-that reported 2010 SAT scores broken down by the Critical Reading, Math, and Writing sections. Each observation is a high school, with the reported 
-scores resulting from the mean SAT scores from 2010 college-bound seniors. I wanted to find out more about CollegeBoard's recent decision
-to [make the essay (Writing) section optional](http://www.bloomberg.com/news/articles/2014-03-05/college-board-redesigns-sat-exam-making-essay-portion-optional),
-and figured that if there was a close enough correlation between Critical Reading and Writing scores, we could reasonably say that the SAT
+I gathered my data using [NYC Open Data](https://data.cityofnewyork.us/) and specifically sourced a [dataset](https://data.cityofnewyork.us/Education/SAT-Results/f9bf-2cp4/) 
+that reported 2012 SAT scores broken down by the Critical Reading, Math, and Writing sections. Each observation is a high school, with the reported 
+scores resulting from the mean SAT scores from 2012 college-bound seniors. I wanted to find out more about CollegeBoard's recent decision
+to restructure the SAT (probably due to the ACT's growing market share of test-takers, really),
+and figured that if there was a close enough association between Critical Reading and Writing scores, we could reasonably say that the SAT
 skewed scores in favor of those who were stronger at the humanities.
 
 #### Challenges
@@ -25,6 +25,6 @@ for the most part the concepts and ideas were new to me. I adapted some code pro
 That said, there's no need to reinvent the wheel). Trying to work with ggplot2 has also been *great fun*, but it's evidently not something to be 
 mastered (or learned, for that matter) overnight.
 
-For information regarding my analysis, feel free to check out my statistical report! It's the only PDF in this directory.
+For information regarding my analysis, feel free to check out my statistical report! It's the only PDF in this directory (Report.PDF, although you might want to spare GitHub's online file viewer and clone the repo to look at it locally).
 
 Questions and feedback are always welcome! Feel free to contact me through GitHub or email me at <danny.vilela@nyu.edu>.
