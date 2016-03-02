@@ -8,28 +8,51 @@
 require(ggplot2)
 require(car)
 
+###############
+## SETUP I/O ##
+###############
+
+# Prepare an output file to append all of our text output
+sink("results", append = TRUE, split = TRUE)
+
 # Read in our NYC SAT dataset
 df <- read.csv("SAT_Results_2012.csv", header = TRUE)
 
 # Convert our CSV to a data frame and attach it to our session
 df <- data.frame(df)
 
+###################################
+## DATA VALIDATION / CLEANING UP ##
+###################################
+
 # Clean our data to get rid of schools who did not report valid results
 df <- df[!(df$Num.of.SAT.Test.Takers == 's'),]
+
+# Clean our data to get rid of our first outlier, ``Queens Satellite High School''
+# Uncomment this line if you would like to include our first outlier
+df <- df[!(df$SCHOOL.NAME == 'QUEENS SATELLITE HIGH SCHOOL FOR OPPORTUNITY'),]
+
+# Clean our data to get rid of our second outlier, ``GED PLUS s CITYWIDE''
+# Uncomment this line if you would like to include our second outlier
+df <- df[!(df$SCHOOL.NAME == 'GED PLUS s CITYWIDE'),]
 
 # Our columns are read in as type character, so convert to numeric
 df$SAT.Critical.Reading.Avg..Score <- as.numeric(as.character(df$SAT.Critical.Reading.Avg..Score))
 df$SAT.Writing.Avg..Score <- as.numeric(as.character(df$SAT.Writing.Avg..Score))
 
 # Establish easy references for our x and y axes
-x_axis <- df$SAT.Critical.Reading.Avg..Score
-y_axis <- df$SAT.Writing.Avg..Score
+Critical_Reading_Score <- df$SAT.Critical.Reading.Avg..Score
+Writing_Score <- df$SAT.Writing.Avg..Score
+
+########################
+## MAIN DATA ANALYSIS ##
+########################
 
 # Let's look at our data
 read_v_write <- ggplot(df) + 
-  geom_point(aes(x = x_axis, 
-                 y = y_axis)) +
-  labs(x = "Critical Reading Score", y = "Writing Average Score") +
+  geom_point(aes(x = Critical_Reading_Score, 
+                 y = Writing_Score)) +
+  labs(x = "Critical Reading Score", y = "Writing Score") +
   xlim(200, 800) + ylim(200, 800)
 
 read_v_write
@@ -40,11 +63,16 @@ ggsave(read_v_write, filename = "read_v_write_2012.png")
 # Explore any outliers in our data
 # Click on a point to identify it, the press `esc' to return all points clicked
 #print("Press the escape key once you're done choosing points to be identified.")
-#identify(x_axis, y_axis)
+#identify(Critical_Reading_Score, Writing_Score)
 
 # Fit our linear regression model and output the summary statistics
-regression <- lm(y_axis ~ x_axis)
+regression <- lm(Writing_Score ~ Critical_Reading_Score)
+
+# Output the summary of our regression object, :regression
 summary(regression)
+
+# Plot all relevant diagnostic plots for our linear regression object, :regression
+plot(regression, which = c(1,2))
 
 # Perform partial F-test for slope coefficient = 1
 linearHypothesis(regression, c(0,1), rhs = 1)
@@ -56,38 +84,38 @@ regplot.confbands.fun <- function(x, y, confidencelevel= .95, CImean = TRUE,
   #### For a simple linear regression line, this function
   #### will plot the line, CI for mean response, prediction intervals, 
   #### and (optionally) a simulataneous CI for the regression line.
-  xx <- x[order(x)]
-  yy <- y[order(x)]
-  lm1 <- lm(yy ~ xx)	
-  plot(xx, yy, ylim = c(min(yy), (max(yy) + .2 * max(yy))))
+  Critical_Reading <- x[order(x)]
+  Writing <- y[order(x)]
+  lm1 <- lm(Writing ~ Critical_Reading)	
+  plot(Critical_Reading, Writing, ylim = c(min(Writing), (max(Writing) + .2 * max(Writing))))
   abline(lm1$coefficients)
   #### calculation of components of intervals ####
-  n <- length(yy)
-  sx2 <- (var(xx))
+  n <- length(Writing)
+  sx2 <- (var(Critical_Reading))
   shat <- summary(lm1)$sigma
   s2hat <- shat ^ 2
-  SEmuhat <- shat * sqrt( (1/n) + ((xx - mean(xx)) ^ 2)/((n - 1) * sx2) )
+  SEmuhat <- shat * sqrt( (1/n) + ((Critical_Reading - mean(Critical_Reading)) ^ 2)/((n - 1) * sx2) )
   SEpred <- sqrt(s2hat + SEmuhat ^ 2)
   t.quantile <- qt(confidencelevel, lm1$df.residual)
   ####
   if (CImean == TRUE) {
     mean.up <- lm1$fitted + t.quantile*SEmuhat
     mean.down <- lm1$fitted - t.quantile*SEmuhat
-    lines(xx, mean.up, lty = 2)
-    lines(xx, mean.down, lty = 2)
+    lines(Critical_Reading, mean.up, lty = 2)
+    lines(Critical_Reading, mean.down, lty = 2)
   }
   if (PI == TRUE) {
     PI.up <- lm1$fitted + t.quantile*SEpred
     PI.down <- lm1$fitted - t.quantile*SEpred
-    lines(xx, PI.up, lty = 3)
-    lines(xx, PI.down, lty = 3)
+    lines(Critical_Reading, PI.up, lty = 3)
+    lines(Critical_Reading, PI.down, lty = 3)
   }
   if (CIregline == TRUE) {
     HW <- sqrt(2 * qf(confidencelevel, n - lm1$df.residual, lm1$df.residual)) * SEmuhat
     CIreg.up <- lm1$fitted + HW
     CIreg.down <- lm1$fitted - HW
-    lines(xx, CIreg.up, lty = 4)
-    lines(xx, CIreg.down, lty = 4)
+    lines(Critical_Reading, CIreg.up, lty = 4)
+    lines(Critical_Reading, CIreg.down, lty = 4)
   }	
   if (legend == TRUE) {
     choices <- c(CImean, PI, CIregline)
@@ -95,7 +123,7 @@ regplot.confbands.fun <- function(x, y, confidencelevel= .95, CImean = TRUE,
     names.line <- c("Pointwise CI for mean resp.", 
                     "Prediction Int.", 
                     "Simultaneous conf. region for entire reg. line")
-    legend(max(xx) - (.2 * max(xx)), max(yy) + (.2 * max(yy)), 
+    legend(max(Critical_Reading) - (.2 * max(Critical_Reading)), max(Writing) + (.2 * max(Writing)), 
            legend = names.line[choices], lty = line.type[choices])
   }
 }
@@ -104,13 +132,13 @@ regplot.confbands.fun <- function(x, y, confidencelevel= .95, CImean = TRUE,
 png(filename = "fitted_line_plot_2012.png")
 
 # Determine fitted line plot for x_axis and y_axis
-regplot.confbands.fun(x_axis, y_axis)
+regplot.confbands.fun(Critical_Reading_Score, Writing_Score)
 
 # Close our png graphics device
 dev.off()
 
 # Confidence and prediction intervals for new observation
-new_read_v_write <- data.frame(x_axis = c(-1.5))
+new_read_v_write <- data.frame(Critical_Reading_Score = c(-1.5))
 
 # Calculate confidence and prediction interval
 predict(regression, new_read_v_write, interval = c("confidence"))
