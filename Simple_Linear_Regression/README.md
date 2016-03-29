@@ -1,4 +1,4 @@
-## Problem Set 1
+## Simple Linear Regression
 
 #### Instructions
 Gather data where there is a numerical response variable, and one numerical potential predicting variable. Your sample should consist of 
