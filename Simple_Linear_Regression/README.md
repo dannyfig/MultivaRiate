@@ -5,6 +5,8 @@ Gather data where there is a numerical response variable, and one numerical pote
 at least 30 data values. Analyze the data in a full and appropriate fashion using any methods and techniques that are appropriate, 
 and discuss what you find.
 
+For full instructions, see [here](http://people.stern.nyu.edu/jsimonof/classes/2301/pdf/hw2.pdf).
+
 #### Summary
 I gathered my data using [NYC Open Data](https://data.cityofnewyork.us/) and specifically sourced a [dataset](https://data.cityofnewyork.us/Education/SAT-Results/f9bf-2cp4/) 
 that reported 2012 SAT scores broken down by the Critical Reading, Math, and Writing sections. Each observation is a high school, with the reported 
