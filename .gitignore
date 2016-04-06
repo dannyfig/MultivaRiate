@@ -1,0 +1,12 @@
+# History files
+**/.Rhistory
+**/.Rapp.history
+
+# Session Data files
+**/*.RData
+
+## Core latex/pdflatex auxiliary files:
+**/*.aux
+**/*.log
+**/*.out
+**/*.tex
