@@ -59,7 +59,7 @@
 
 \title{\textbf{Musical Chairs:}\\ 
 \vspace*{0.25em} % Title
-How BillBoard rankings influence pop success} % Subtitle
+Interpreting features that influence Billboard ranking} % Subtitle
 
 \author{\textsc{Danny Vilela} % Author
 \\{New York University}} % Institution
@@ -70,6 +70,18 @@ How BillBoard rankings influence pop success} % Subtitle
 
 \begin{document}
 
+% Generate FERPA cover page
+\topskip0pt
+\vspace*{\fill}
+\begin{center}
+	Danny Vilela
+\end{center}
+\vspace*{\fill}
+
+\newpage
+
+%----------------------------------------------------------------------------------------
+
 \maketitle % Print the title section
 
 %----------------------------------------------------------------------------------------
@@ -78,343 +90,297 @@ How BillBoard rankings influence pop success} % Subtitle
 
 \section*{Introduction}
 
-Practically gospel for up-and-coming and star-studded artists alike, the US Billboard is the \textit{de facto} source for determining a particular song's nationwide influence and is paramount to cementing one's self as a musical icon. As a ranking for the nation's top 100 trending songs, the billboard has seen numerous iterations in its attempts to accommodate to ever-changing public outlets --- evolving from including only commercially-available songs to its modern, digital-platform (read: YouTube views, Spotify and Apple Music stream counts, AmazonMP3 and iTunes sales, etc.) inclusive equivalent. \par
+Practically gospel for up-and-coming and star-studded artists alike, the US Billboard is the \textit{de facto} source for determining a particular song's nationwide influence, and consistent top 5 placement is tantamount to cementing one's self as a musical icon. As a ranking for the nation's top 100 trending songs, the billboard has seen numerous iterations in its attempts to accommodate to ever-changing public outlets --- evolving from including only commercially-available songs to its modern, digital-platform (read: YouTube views, Spotify and Apple Music stream counts, AmazonMP3 and iTunes sales, etc.) inclusive equivalent. \par
 
-In 2013, it was reported that the average iTunes user generates \$12 in music sales. This might not sound like much until you consider that iTunes alone accounted for roughly \$6.9 billion in annual consumer spending on music --- roughly three-fourths of global consumer spending for the 2012/2013 fiscal year. In the years since the music industry has seen a significant array of changes -- particularly in the meteoric rise of streaming services like Spotify and Apple Music. That said, it is evident that the Billboard top 100 accounts for much of this success: a higher profile on the billboard draws attention at the national level and often promotes artists to continue releasing music in hopes of capitalizing on said limelight. Given the possibility of predicting a particular song's success would have widespread utility: artists can better understand their standing within the musical industry, record labels can optimize their artists' position on the top 100, and both can optimize their release schedules to maintain a consistent profit. \par
+In 2013, it was reported that the average iTunes user generates \$12 in music sales. This might not sound like much until you consider that iTunes alone accounted for roughly \$6.9 billion in annual consumer spending on music --- roughly three-fourths of global consumer spending for the 2012/2013 fiscal year. In the years since the music industry has seen a significant array of changes -- particularly in the meteoric rise of streaming services like Spotify and Apple Music. That said, it is evident that the Billboard top 100 accounts for much of this success: a higher profile on the billboard draws attention at the national level and often promotes artists to continue releasing music in hopes of capitalizing on said limelight. The opportunity to predict a particular song's success would have widespread utility: artists can better understand their standing within the musical industry, record labels can optimize their artists' position on the top 100, and both can optimize their release schedules to maintain a steady social reach. \par
 
 \section*{Problem}
-With the seemingly-unforgiving nature of the public's interests paired with a short-term attention span, a series of poor rankings on the top 100 can quickly fade an artist's relevancy and cause career-crippling effects. Artists who consistently fail to break the top 40 are seldom considered ``successful'' by record companies, investors, and -- most importantly -- the public.
+Given the unforgiving nature of the public's consumer interests paired with a short-term attention span, a series of poor rankings on the top 100 can quickly fade an artist's relevance and cause career-crippling effects. Artists who consistently fail to break the top 100 are seldom considered ``successful'' by record companies, investors, and -- most importantly -- the public. \par 
 
-With two sections pertaining to material that is overwhelmingly considered to be within the same field -- English and the humanities -- it is evident that a student would strive to maximize their SAT score by favoring the material tested within the Writing and Critical Reading sections. Our assertion, then, is that the separate Critical Reading and Writing sections on the SAT result in similar scores that do not accurately represent individual reading and writing comprehension skills, and instead serve as a detriment to the standardized exam. This problem is important due to the SAT's omnipresence within numerous dimensions of the socio-educational system and ability to influence social progress: if rich students can afford tutors and improve a single ``major'' skill (English language skills), they are able to more efficiently game the SAT's weaknesses and further contribute to the national achievement gap.
+As a result, we are interested in examining what readily-available factors can be determined to be most influential towards any particular song's ranking within the top 100. Naturally, we approach our prediction problem: how can we best predict a song's success? This problem has numerous dimensions that our dataset will not be able to account for -- including the artist's ``image'' and practically everything not explicitly influencing billboard ranking -- and so we approach this task by limiting ourselves to publicly-available, quantified billboard ranking data. We seek to determine if we can model a song's peak chart placement through historical data, and if so, what particular predictors can best perform said task. \par
+
+Given we are concerned with a song's peak overall chart position, we are tasked with determining which predictors will give us our best estimate. We rationalize that a mixture of a song's inherent features will allow us to best determine its peak chart position. Naturally, we include the provided predictors:
+\begin{enumerate}
+	\item our song's position last week: \texttt{last\_week\_position}
+	\item our song's current peak position: \texttt{current\_peak}
+	\item how long our song has been on the current top 100 chart: \texttt{weeks\_on\_chart}
+	\item our song's entry position into the top 100: \texttt{entry\_position}
+	
+\end{enumerate}
+
+and our calculated predictor:
+\begin{enumerate}
+	\item our artist's ``relevance score'' for the decade in question: \texttt{artist\_relevance}
+\end{enumerate}
+
+%Note: \texttt{concurrent\_count} is determined by the number of songs our artist concurrently has in the top 100 \textit{for that particular chart date}. For example, if Rihanna has 3 songs on the 6 September 2014 billboard, her \texttt{concurrent\_count} rating is 3 for all 3 of her billboard top 100 songs. If in the following week she releases another song that debuts onto the top 100, each of her songs will have a \texttt{concurrent\_count} rating of 4 on that chart table, and so on. It seems evident, but I predict that if an artist has a higher concurrent count, we can expect that their next release is more likely to enter the top 100. \par
+
+\texttt{artist\_relevance} is calculated by noting how many unique songs an artist has released in our dataset's time frame. So, for example, Rihanna will have a \texttt{artist\_relevance} score of 29 if, from 2010 to 2016, 29 of her songs have entered the top 100 on the billboard chart. Again, it seems almost obvious, but I predict that if an artist has a higher relevance score, their next song is more likely to enter the top 100. \par
+
+\section*{Regression Model}
 
 \subsection*{Model Definition}
-We can assert that the SAT was unable to \textbf{independently} test writing and critical reading skills if for any Critical Reading score we can closely approximate a Writing score. Therefore, we represent our assertion through a simple linear regression model:
-\[ \text{Average writing score} =  \beta_0 + \beta_1 \times \text{Average critical reading score} + \text{random error} \]
-Furthermore, we note that since the appropriateness of our assertion's model follows a $\beta_0 = 0$ and $\beta_1 = 1$ -- where there is no significant $\beta_0$ due to our desire to express average writing score as a function of average critical reading score -- we can simplify our model such that average critical reading and average writing scores are consistent with one another:
-\[ \text{Average writing score} = \text{Average critical reading score} + \text{random error} \]
+We can represent our earlier assertion through the linear regression model:
+\[ \text{Peak chart position} =  \beta_0 + \beta_1 \times \texttt{last\_week\_position} + \beta_2 \times \texttt{current\_peak} \] 
+\[\hspace*{10.1em} + \beta_3 \times \texttt{weeks\_on\_chart} + \beta_4 \times \texttt{entry\_position} \]
+\[\hspace*{0.5em} + \beta_5 \times \texttt{artist\_relevance} \]
 
-\section*{Data Sourcing and Cleaning}
-I sourced my data by using NYC's new data initiative, NYC Open Data, which allowed me to access datasets pertaining to different public sectors -- including education -- who have released license-free data to the public. My dataset \href{https://data.cityofnewyork.us/Education/SAT-Results/f9bf-2cp4/}{(\texttt{data.cityofnewyork.us/Education/SAT-Results/f9bf-2cp4/})} reported 2012 SAT scores broken down by the scores pertaining to the critical reading, mathematics, and writing sections. Each observation was a high school, with the reported scores resulting from the mean SAT scores from all 2012 college-bound seniors at that particular high school. The NYC Open Data portal provides a simple ``Export'' to CSV, and so obtaining the data was straightforward.
-
-\subsection*{Variables}
-For each observation, the CSV contained six features: school code, school name, number of SAT test takers, critical reading average, math average, and writing average scores (averaged across the $n$ number of SAT test takers at that particular school). Note that this analysis does not weigh a school more favorably for having more test-taking students or having higher average scores per section, since there are factors unrelated to this analysis that may be influencing the number of seniors that take the SAT at any particular school or influence how well they perform (systemic social, financial, and educational accessibility deficiencies being particularly notable).
+We note that a song that has yet to be released will have profound impacts on our ability to predict its overall peak chart position. Furthermore, our model seems incomplete in that it seems to apply a slightly-too-harsh of a penalty for artists who have never released a song in a particular decade, since all predictors will be 0. That said, the limits of our dataset do not allow us to speculate about an artist's appeal or ability to meet consumer demand, and so we have few alternative choices.
 
 \subsection*{Regression Validation}
 Before approaching a dataset with the mindset of performing a linear regression, it was necessary to validate that the conditions for performing a regression analysis of our data was an appropriate route.
-\begin{enumerate}
 
-	\item \textbf{$E(\epsilon_i) = 0\ \forall\ i$}: Although our dataset does sample from numerous different high schools where different socioeconomic influences may be impacting the results returned from each high school, we are interested in the intra-observational relationship between critical reading and writing. In other words, we do not care to compare two schools from completely different socioeconomic backgrounds --- rather, we wish to compare a school's average critical reading score to it's own average writing score.
+\begin{enumerate}
+	\item \textbf{$E(\epsilon_i) = 0\ \forall\ i$}: No members of the population -- that is, songs released by artists -- are systematically above or below the regression line due to the nature of the billboard's ranking: if a song is popular among fans, is played often on the radio or other music media (MTV, Spotify, Apple Music), and is selling well through physical and digital mediums (iTunes, AmazonMP3), it will be ranked accordingly. We rely upon the billboard's algorithm for determining song ranking to be robust in that it does not inherently prefer certain songs by certain artists (this is different from a well-known artist's song doing well -- leveraging virality/popularity $\neq$ inherent bias).
 	
-	\item \textbf{$V(\epsilon_i) = 0\ \forall\ i$}: We note that the homoscedasticity within this dataset is referring to the equal playing field for all high school students to achieve a possible 800/800 on any particular section of the SAT. It is \textbf{not} the case that the (critical reading)/(writing) relationship is stronger for some schools than for others.
+	\item \textbf{$V(\epsilon_i) = 0\ \forall\ i$}: We note that the homoscedasticity within this dataset is referring to the equal playing field for all songs to possibly achieve a peak ranking of 1. It is \textbf{not} the case that relationship between the predictors and our response variable is more inherently tied for certain songs. As previously stated, all songs are given the same opportunity to rank highly on the chart -- there is no assumed inherent bias on behalf of the billboard ranking algorithm -- and so we assert that the $x$/$y$ relationship is \textbf{not} stronger for some members of the population and weaker for others.
 	
-	\item $\epsilon_i$ and $\epsilon_j$ are not correlated with each other for $i \neq j$: This is fundamentally assured due to the randomness of our dataset: it would be impossible to assert that knowing observation 283's expected value will tell us anything about observation 284's (or 285's, 286's, etc.) expected value. The only such case where knowing observation $i$'s expected value would be able to tell us anything about observation $j$'s expected value would be if the same set of seniors that were counted in observation $i$'s expected value were counted towards observation $j$'s expected value. No expected values within our dataset are correlated because it would not be possible for (a senior/group of seniors) enrolled into the school on observation $i$ to also be enrolled into the school on observation $j$. Therefore, there cannot be a correlation between expected values when $i \neq j$.
+	\item $\epsilon_i$ and $\epsilon_j$ are not correlated with each other for $i \neq j$: This is fundamentally assured due to the randomness of our dataset: it would be impossible to assert that knowing observation $i$'s expected value will tell us anything about observation $j$'s (or $k$'s, $m$'s, etc.) expected value. The only such case where knowing observation $i$'s expected value would be able to tell us anything about observation $j$'s expected value would be if the same artist for song $i$ released a song $j$ with the exact same ``environment'' -- that is, media attention, public interest, etc -- which cannot be true for any observations $i$ and $j$. No expected values within our dataset are correlated because it would not be possible for a song $i$ to also be a song $j$ on the \textbf{same chart}. Anywhere that a value could be double-counting (such as when calculating \texttt{artist\_relevance}) -- and thus where a value $\epsilon_i$ could be correlated with $\epsilon_j$, I took extreme precaution to only observe the observation $i$ in a time frame where it is the only instance of $i$. Therefore, there cannot be a correlation between expected values when $i \neq j$.
 	
-	\item $\epsilon_i \sim N(0,\ \sigma^2)$: Given that our data contains a large number of observations with scores ranging across the score spectrum and an evident clustering of scores towards the mean, we can assume that our data represents a normal distribution.
+	\item $\epsilon_i \sim N(0,\ \sigma^2)$: Given that our data contains a large number of observations with peak rankings ranging across the spectrum, we can assume our data represents a normal distribution.
 \end{enumerate}
 
-Because we can show that these assumptions hold, we know that least squares regression is the proper regression to use.
+Because we can show that these assumptions hold, we know that least squares regression is the proper regression to use. \par
+
+\section*{Data Sourcing, Cleaning, Engineering}
+I sourced my data by using GitHub user \href{https://github.com/guoguo12/billboard-charts}{\texttt{guoguo12}'s \texttt{billboard-charts}} parser, which utilizes a Python interface in order to query   and scrape data from Billboard's \href{http://www.billboard.com/charts/hot-100}{\texttt{website}} and generate a pipe-separated text file with numerous features for each song in the top 100. Afterwords, I utilized \textsc{R} in order to parse, clean, and prepare the data for analysis. During said analysis, I wrote code in order to produce variables of my own that I felt would be relevant to our regression model's design. \par
+
+The data's original form contained every weekly top 100 entry stretching from its debut in 1940 to March 2015. This particular analysis will use a subset of that data -- the top 100 charts from 2010 and onward -- as its main focus. We note that a model that is well-performing on the top 100 charts of 2010 and onward may not perform as well on top 100 charts from 2000 to 2010 or even 1990 to 2000 due to fundamental external changes in the top 100's ranking algorithm and advancements in music consumption. \par
+
+Stripping our data down from all top 100 entries since 1940 to just the top 100 entries from 2010 and onward reduces our data by just over 90\% -- from 343 thousand to 27 thousand observations. We note that our data is misleading: the top 100 charts did \textbf{not} contain 27 thousand different songs over 6 years -- rather, there have been 100 entries every week for approximately 270 weeks, resulting in 270 thousand rows. Hence, our data contains many duplicates to be accounted for across different top 100 dates. \par
 
 \subsection*{Data Validation}
-Upon obtaining the data, I noticed that high schools that were not able to report more than 5 seniors' scores had their entire observation suppressed, leaving the ``s'' character in place of each of their features. This required a line of code within my \textsc{R} script in order to filter out rows where the number of test takers was equal to the string ``s''. Furthermore, the SAT section scores were encoded as character strings, and so my \textsc{R} script also converted each feature into its numerical value.
+Upon obtaining the data, I noticed that songs that were just debuting onto the top 100 had ``NEW'' in their \textbf{last.week} column, which proved problematic when determining the impact of our first predictor, \texttt{last\_week\_position}. To account for this, I set any song who had yet to debut onto the top 100 (and as such, had ``NEW'' in that field) to rank 101 in order to standardize what it meant to be new on the top 100. \par
+
+A more fundamental dataset design problem that I had to keep in mind was that there would be an \textbf{enormous} amount of repetitive data. Given that this is tracking song position over time, I knew that a particular song could be seen multiple times in a particular timeframe of chart updates. \par
+
+\subsection*{Predictor Engineering}
+In order to determine the values for our additional, calculated predictor I had to consider how calculating these values would impact their representation. It was important to constantly keep the inherent overlapping of data in mind in order to prevent redundant, erroneous values. A brief explanation of the methodology for the calculated value is as follows:\par
+
+\begin{enumerate}
+	\item In order to generate values for \texttt{relevance score}, it was necessary first to \textit{split} our original \texttt{after\_2010} dataset such that we were interfacing with each individual chart entry from Jan 2010 to March 2015 (in other words, splitting one dataset into 271 100-line tables). Next, for each chart entry $c_{i}$ we identify all unique artists within a chart, identify each unique song by a unique artist within our time frame dataset, and write that value into $c_{i}$'s \texttt{relevance\_score} field.
+\end{enumerate}
 
 \section*{Exploratory Data Analysis}
-First, let's take a quick look at our data through a scatterplot:
+First, let's take a quick look at a summary of our provided data:
 
-%\begin{figure}[H]
-%	\label{Figure 1}
-%	\caption{Scatterplot of our high schools' reported scores}
-%	\includegraphics[scale = 0.14]{original_plots/read_v_write_2012}
-%	\centering
-%\end{figure}
+\begin{verbatim}
+ > summary(after_2010)
 
-At first glance, there seems to be a very strong linear relationship between average critical reading score and average writing score. We also note that, while most datapoints are centered at the 350 \textasciitilde\ 450 point range (with a thorough range of scores -- ranging from high 200s to low 600s), we have a particularly notable outlier whose averaged scores are at the 680 range while its position is still aligned with our regression line. After utilizing \textsc{R}'s \textit{identify} function, we discover that this school is actually \textit{Stuyvesant High School}, an extremely competitive and well-performing public high school in New York City. \par
-Moving on, we perform a least squares regression with average writing score as our dependent (target) variable, and average critical reading score as our independent (predicting) variable:
+       pos          last.week          peak       weeks.on.chart
+ Min.   :  1.00 | NEW    : 2703 | Min.   :  1.00 | Min.   : 1.0  |
+ 1st Qu.: 25.75 | 1      :  271 | 1st Qu.: 12.00 | 1st Qu.: 4.0  |
+ Median : 50.50 | 10     :  271 | Median : 37.00 | Median :10.0  |
+ Mean   : 50.50 | 15     :  271 | Mean   : 40.37 | Mean   :11.7  |
+ 3rd Qu.: 75.25 | 19     :  271 | 3rd Qu.: 65.00 | 3rd Qu.:17.0  |
+ Max.   :100.00 | 2      :  271 | Max.   :100.00 | Max.   :85.0  |
+                | (Other):23042 |                                
+                  
+          title                    artist             chart.entry.date     
+ Radioactive        :   92 | TAYLOR SWIFT   :  387  |  Min.   :39865   |
+ Sail               :   79 | BRUNO MARS     :  274  |  1st Qu.:40586   |
+ Counting Stars     :   68 | KATY PERRY     :  263  |  Median :41041   |
+ Party Rock Anthem  :   68 | LADY ANTEBELLUM:  261  |  Mean   :41050   |
+ Rolling In The Deep:   67 | LUKE BRYAN     :  249  |  3rd Qu.:41517   |
+ Ho Hey             :   62 | IMAGINE DRAGONS:  235  |  Max.   :42070   |
+ (Other)            :26664 |  (Other)        :25431 |        
+                            
+ entry.position      overall.peak      overall.weeks.on.chart       chart.date      
+  Min.   :  1.00 | Min.   :  1.00   |     Min.   : 1.00       |  Min.   :20100102  |  
+  1st Qu.: 60.00 | 1st Qu.:  8.00   |     1st Qu.:16.00       |  1st Qu.:20110416  |
+  Median : 88.00 | Median : 27.00   |     Median :20.00       |  Median :20120804  |
+  Mean   : 73.84 | Mean   : 31.93   |     Mean   :21.98       |  Mean   :20121720  |
+  3rd Qu.: 95.00 | 3rd Qu.: 51.00   |     3rd Qu.:26.00       |  3rd Qu.:20131123  |
+  Max.   :100.00 | Max.   :100.00   |     Max.   :85.00       |  Max.   :20150307  |
+\end{verbatim}
+
+This summary data tells us a lot about our dataset and how we should be approaching our analysis. In particular, certain fields are strongly meaningless and deriving summary statistics provide little to no benefit towards understanding the analysis at hand. Some summary examples include:
+
+\begin{enumerate}
+	\item Our position tracker \textbf{pos}, chart date \textbf{chart.date}, and chart entry date \textbf{chart.entry date} tell us nothing about our data on their own. Given 271 top 100 charts, it must be true that the smallest and largest possible positions are 1 and 100, respectively. Chart date and chart entry date are meaningless without context.
+	\item Our prior-week tracker \textbf{last.week} gives us some insight: it seems as though it is 10 times more likely that a song breaks into the top 100 from sub-100 ranking than it is for a song to internally go from top 100 to top 100 ranking.
+	\item The median and mean \textbf{peak} descriptors tell us that an particular song on the top 100 will more or less gravitate towards rank 38.
+	\item Our \textbf{title} field says little about the data, but it seems to contradict our previous point about ``Radioactive'' staying on the charts for 85 weeks. In fact, the discrepancy can be traced back to Kings of Leon releasing a song by the same name in 2010 (whereas the more popular ``Radioactive'' was released in 2012).
+	\item Our \textbf{artist} field tells us the total number of times we've seen a particular artist over the six-year period. We can see (with little surprise) that pop-icons Taylor Swift, Bruno Mars, and Katy Perry lead the charts for overall relevance. Note that this frequency is different from the calculated \texttt{relevance\_score} statistic, since ``Drake'' \textbf{will not} be accounted for in this summary statistic if the artist is ``Rihanna ** Drake'', where ``**'' is any of ``feat.'', ``featuring'', ``and'', ``,'', or any other separator. \texttt{relevance\_score} accounts for this and instead does an entire substring search over the \textbf{artist} string field.
+	\item Another interesting statistic is \textbf{entry.position}, which tells us the position at which any particular song entered the top 100. Our data is incredibly left-skewed, with most of our songs entering the top 100 in the bottom 40 ranks. That said, we note that some songs have actually \textit{debuted} at number 1 on the top 100, presumably incredibly difficult. After further investigation, these songs proved to be incredibly -- almost explosively -- viral, including Taylor Swift's ``Shake it Off'' and Baauer's ``Harlem Shake''.
+	\item The total overall week tracker \textbf{weeks.on.chart} gives us very interesting insights into a song's staying power. Most songs are able to maintain approximately 10 weeks within the top 100 before falling out of favor, however we note a particularly interesting song who was able to stay in the top 100 for an astounding 85 weeks. This song -- ``Radioactive'' by IMAGINE DRAGONS -- was a viral hit, used in movie soundtracks, commercials, and many, many more. Exploring the data further, it was interesting to see that the song's last week in the top 100 had the song plummit from rank 49 to sub-100.
+\end{enumerate}
+
+Now, let's plot the relationship between a song's overall peak and the number of weeks it has been on the charts:
+
+\begin{figure}[H]
+	\label{Figure 1}
+	\caption{Scatterplot of a song's particular song's relationship between number of weeks on chart and its ongoing peak}
+	\includegraphics[scale = 0.5]{plots/weeks_v_overall_peak}
+	\centering
+\end{figure}
+
+This data seems to be a noisy set of data points -- but we can glean a few interesting insights from what's there. In particular, we note that most songs do not last more than approximately 20 weeks on the chart, and that longer-lasting songs tend to champion the hot 100 given their breakout velocity. Given that songs at the very top left of the graph have short staying power and -- perhaps subsequently -- a lower rank on the chart, we can find some evidence that would support an inversal relationship between number of weeks on chart and overall peak --- that is, a larger staying power might result in a peak closer and closer to the top.
+
+For reference, let's view the scatterplots of \textbf{overall.peak} in relation to all other predictors:
+
+\begin{figure}[H]
+	\label{Figure 2}
+	\caption{Scatterplot of all pairs between our predictors}
+	\includegraphics[scale = 0.5]{plots/pairs}
+	\centering
+\end{figure}
+
+We note that there is no need to modify any of our predictors through logarithmic or power transformations -- their raw values will suffice. Let's also look at our predictor variables' correlations:
+
+\begin{verbatim}
+> cor(
++   cbind(after_2010$overall.peak, 
++      after_2010$last.week, after_2010$peak, after_2010$weeks.on.chart,
++      after_2010$entry.position, after_2010$artist.relevance
++   )
++ )
+
+Correlations
+                  over.p    last.wk   peak     wks.on.chrt entry.pos art.rele
+overall.peak      1.000000
+last.week         0.221202  1.000000   
+peak              0.846744  0.240058  1.000000
+weeks.on.chart   -0.457873 -0.039673 -0.606853  1.000000
+entry.position    0.433522  0.198551  0.502938 -0.062878   1.000000
+artist.relevance -0.000920 -0.133534 -0.032095 -0.085049  -0.121226  1.000000
+\end{verbatim}
+
+We note a few interesting things. Primarily, we see ones along the diagonal and soon realize that, of course, a coefficient \textit{must} be correlated to \textit{itself}. We also see a mixed amount of multicollinearity across our predictor variables, implying that an increase in one predictor results in a decrease in another. In particular, we see that some of our predictors have negative correlation values. Because our regression uses around half of our available features and two features based on other internal features, we may have several redundant variables whose impact on our regression is minimal, at best. Let's look at our regression output:
 
 \begin{verbatim}
 ------------------------------------------------------------------------------
+> summary(prediction_a)
+
 Residuals:
-	  +---------+--------+----------+--------+---------+  
-	  |   Min   |   1Q   |  Median  |   3Q   |   Max   |
-	  +---------+--------+----------+--------+---------+  
-	  | -63.292 | -7.206 |  0.851   | 8.866  | 44.999  |
-	  +---------+--------+----------+--------+---------+ 
-	
+	  +---------+--------+---------+--------+--------+
+	  |   Min   |   1Q   | Median  |   3Q   |  Max   |
+	  +---------+--------+---------+--------+--------+
+	  | -73.721 | -3.548 |  1.678  |  7.527 | 27.087 |
+	  +---------+--------+---------+--------+--------+ 
+
 Coefficients:
-                  +-----------------+---------+---------+--------------+
-                  |  Estimate Std.  |  Error  | t value |   Pr(>|t|)   |
-   +--------------+-----------------+---------+---------+--------------+
-   |	 (Intercept) |    -7.52321     | 4.93528 |  -1.524 |    0.128 .   |
-   +--------------+-----------------+---------+---------+--------------+
-   |   CR_Score   |     1.00164     | 0.01219 |  82.166 |  <2e-16 ***  |
-   +--------------+-----------------+---------+---------+--------------+
-    ---
-    Signif. codes:  0 `***' 0.001 `**' 0.01 `*' 0.05 `.' 0.1 ` ' 1
-    ---
-	
-	Residual standard error: 14.19 on 419 degrees of freedom
-	Multiple R-squared: 0.9416,	   Adjusted R-squared: 0.9414 
-	F-statistic:  6751 on 1 and 419 DF, p-value: < 2.2e-16
+                   +-----------+------------+---------+----------------+
+                   | Estimate  | Std. Error | t value |    Pr(>|t|)    |
++------------------+-----------+------------+---------+----------------+
+| (Intercept)      | -2.661721 |  0.878826  |  -3.029 |   0.00246  **  |
+| last.week        |  0.521330 |  1.305651  |   0.399 |   0.68968      |
+| peak             |  0.813077 |  0.007585  | 107.197 | < 2e-16    *** |
+| weeks.on.chart   |  0.271192 |  0.012188  |  22.251 | < 2e-16    *** |
+| entry.position   | -0.019872 |  0.003880  |  -5.121 |   3.06e-07 *** |
+| artist.relevance |  0.052795 |  0.004673  |  11.297 | < 2e-16    *** |
++------------------+-----------+------------+---------+----------------+
+
+---
+Signif. codes:  0 `***' 0.001 `**' 0.01 `*' 0.05 `.' 0.1 ` ' 1
+---
+
+Residual standard error: 13.94 on 26995 degrees of freedom
+Multiple R-squared: 0.7252,    Adjusted R-squared: 0.7242
+F-statistic: 685.1 on 104 and 26995 DF,  p-value: < 2.2e-16
 ------------------------------------------------------------------------------
+> vif(prediction_a)
+
+VIF:
+                   +----------+-----+-----------------+
+                   |   GVIF   | Df  | GVIF^(1/(2*Df)) |
++------------------+----------+-----+-----------------+
+| last.week        | 5.403777 | 100 |     1.008471    |
+| peak             | 7.281167 |   1 |     2.698364    |
+| weeks.on.chart   | 1.965529 |   1 |     1.401973    |
+| entry.position   | 1.698464 |   1 |     1.303251    |
+| artist.relevance | 1.061266 |   1 |     1.030178    |
++------------------+----------+-----+-----------------+
+
+Regression Equation
+
+Overall peak = -2.661721 + 0.521330 last week position + 0.813077 current peak
+                         + 0.271192 weeks on chart - 0.019872 entry position
+                         + 0.052785 artist relevance
 \end{verbatim}
 
-\noindent We observe that, in accordance with \textsc{R}'s summary, our regression equation becomes:
-\[ \texttt{Average writing score} = \texttt{-7.52321} + \texttt{1.00164} \times \texttt{Average critical reading score} \]
-We note that our regression is very strong, with an $R^{2}$ of 94.16\%, an adjusted $R^{2}$ of 94.14\%, and a very significant F-statistic of 6751. We also note that the intercept coefficient ($\beta_0$) is not relevant to our findings, because by default the SAT is structured such that the lowest score you can obtain on any section is 200. Our slope coefficient ($\beta_1$), however, signifies that a one point increase in mean critical reading score is associated with an estimated expected 1.00164 point increase in our mean writing score.
+The regression fit, unfortunately, is not incredibly strong. One aspect of our data to keep in mind is that when we refer to a one unit increase in last week's position, we are referring to going \textbf{down} the rank by one position (e.g.: last week's position was 30. This week's position is 31. Ergo, we have gone \textbf{down} the chart --- closer to falling off). The coefficients can be interpreted as follows:
+\begin{enumerate}
+	\item A one unit increase in \textbf{last week's position} is associated with a 0.521 position increase on the billboard, bringing us closer to being bumped out of the top 100, holding all else fixed.
+	\item A one unit increase in our \textbf{ongoing peak} (again, bringing us closer to being out of the top 100) is associated with a 0.813 position increase towards the bottom of the billboard, holding all else fixed.
+	\item A one unit increase in the \textbf{number of weeks our song has been on the chart} has a slight decay factor -- all else held fixed, that increase is associated with a drop on the ranking by 0.2712 position.
+	\item A one unit increase in our \textbf{entry position} is associated with a rise in the billboard chart by 0.0199 places, all others held fixed.
+	\item A one unit increase in the \textbf{artist relevance} -- that is, how many songs an artist has released in a particular time frame -- is associated with a fall in the billboard ranking of 0.0528.
+\end{enumerate}
 
-\subsection*{Testing the Null Hypothesis}
-Our t-statistic given in the output for our linear regression's output in \texttt{CR\_Score} examines the null hypothesis of $\beta_1 = 0$, which is strongly rejected. Despite the strong rejection of the null hypothesis, we can clearly observe a relationship between our critical reading scores and writing scores. That said, if we refer back to our original assertion, it states that our model would support a $\beta_1 = 1$. Furthermore, our original assertion states that $\beta_0 = 0$ because of our interest in whether average critical reading scores can directly -- and independently -- predict average writing scores. \par
-Furthermore, the t-statistic for our average writing score can be calculated manually (assuming our model corresponds to a $\beta_1 = 1$):
-\[ t = \frac{1.00164 - 1}{14.19} \approx 0.0001 \]
+We note the moderate amount of redundant variables -- seen where a predictor variable's $t$-statistic proving insignificant. We further note relatively low variance inflation factors across the board, given that a good guideline for VIF for this particular regression would be:
+\[ VIF < max(10, \frac{1}{1 - R^{2}_{model}}) \rightarrow VIF < max(10, \frac{1}{1 - 0.7252}) \rightarrow VIF < max(10, 3.639)\]
 
-Factoring in our reported standard error of the estimate of 3.76 allows us to observe that this model shows signs of extreme relevance, providing a prediction of writing score to within $\pm$ 7.52 points approximately 95\% of the time. 
+That said, we also note the relatively low $R^{2}$ as a potential point of concern. Despite our predictors, our model only explains 72\% of the variability of the response data around its mean. 
 
-\section*{Confidence and Prediction Intervals}
-We can observe our 95\% confidence and prediction intervals on a scatterplot:
-%\begin{figure}[H]
-%	\label{Figure 2}
-%	\caption{95\% confidence and prediction intervals for our regression model, plotted.}
-%	\includegraphics[scale = 0.53]{original_plots/fitted_line_plot_2012}
-%	\centering
-%\end{figure}
-We notice that our confidence interval (short, dashed lines) is nearly overlapping our regression line while our prediction interval (pointwise lines) has a much wider margin in relation to our regression line and confidence interval, simply due to the prediction interval's incorporation of our writing score's variability (whereas our confidence interval does not).
-
-
-\section*{Interpreting Unusual Data}
-Figure 2 also highlights a number of points within the dataset that fall far outside of the 95\% prediction interval -- one of the most notable being ``GED PLUS s CITYWIDE'', a GED program whose college-bound students averaged a 496 on the critical reading section and a 426 on the writing section. A potential explanation for this deviation from the regression line -- aside from the educational impact of GED students often having to balance work and GED fulfillment classes -- is that only 8 seniors had their grades averaged, and so using the mean of 8 data points may be a misleading measurement of central tendency due to the sparse data. We can further observe any unusual data points through diagnostic plots, which can tell us more about whether our assumptions of least squares regressions hold for this particular data. The following plots represent our data's residuals and our residual values versus fitted values:
-
-%\begin{figure}[H]
-%	\label{Figure 3}
-%	\caption{A normality plot with a significant amount of low outliers, potentially indicating right skewness within the dataset}
-%	\includegraphics[scale = 0.65]{original_plots/normal_qq}
-%	\centering
-%\end{figure}
-
-\newpage
-%\begin{figure}[H]
-%	\label{Figure 4}
-%	\caption{A residuals vs fitted plot where we can see a rough horizontal band around the 0 line, if not a partial positive skew}
-%	\includegraphics[scale = 0.52]{original_plots/residuals_vs_fitted}
-%	\centering
-%\end{figure}
-
-Through our plots, we note that observations 226, 263, and 420 are particularly unusual. Whereas observations 226 (``Bronx Aerospace High School'') and 263 (``Juan Morel Campos Secondary School'') did not show outstanding residual values -- with Bronx Aerospace scoring 388 and 382 while Juan Morel scoring 365 and 369 on critical reading and writing scores, respectively -- observation 420 (``Queens Satellite High School for Opportunity'') reported an average score of 403 on critical reading and 367 on writing. \par
-One can speculate -- given the lack of documented history -- regarding ``Queens Satellite High School for Opportunity'' that the exceptional residual can be traced back to the dataset's method of aggregating scores: the mean. By its design, the mean of any dataset can provide a useful statistic for measuring central tendency, however, one main disadvantage is that the mean is particularly susceptible to the influence of outliers. Given that the school just barely met the criteria for not suppressing their score -- with 6 high school seniors representing the high school -- if would be possible for one or more of the seniors to perform exceptionally poorly on the writing section while performing at the average, expected level for the critical reading section (given the SATs history with complaints regarding its writing section's scoring criteria, this seems more likely than the case where the seniors did poorly on the critical reading section). These below-expected scores can dramatically shift our mean, and as such will influence our regression model by contributing a notable lower outlier to our data set.
-
-\section*{Outlier Omission}
-\subsection*{Omitting $o_1$}
-In order to understand the effect of including the outlier ``Queens Satellite High School for Opportunity'' in our regression, we will examine our regression model after removing the outlier. In order to omit this particular school, I modified my \textsc{R} script such that our dataframe \texttt{df} was assigned the rows of \texttt{df} where the \texttt{SCHOOL.NAME} field was not equal to ``QUEENS SATELLITE HIGH SCHOOL FOR OPPORTUNITY''. \par
-The scatterplot, without our outlier, is as follows:
-%\begin{figure}[H]
-%	\label{Figure 5}
-%	\caption{Scatterplot of our high schools' reported scores, one outlier removed ($o_1$)}
-%	\includegraphics[scale = 0.13]{o_1_removed_plots/read_v_write_2012_altered}
-%	\centering
-%\end{figure}
-
-We still note a few unusual points (including ``GED PLUS s CITYWIDE'') as marginally unusual. Looking to \textsc{R}'s regression output:
+\subsection*{Model Selection}
+Given our proposed regression model, we further our analysis by considering how to determine if we can simplify our model such that we can perhaps balance fit on the regression and predictor simplicity -- and if so, what ``best'' model or set of ``best'' models will serve us best. Using a best subsets regression, we can consider the effects of limiting our model to 1, 2, ..., p predictors and better understand the pivotal predictors that truly make our model. Here is the output:
 
 \begin{verbatim}
-------------------------------------------------------------------------------
-Residuals:
-	  +---------+--------+----------+--------+---------+  
-	  |   Min   |   1Q   |  Median  |   3Q   |   Max   |
-	  +---------+--------+----------+--------+---------+  
-	  | -63.366 | -7.240 |  0.784   | 8.797  | 44.934  |
-	  +---------+--------+----------+--------+---------+ 
-	
+> leaps(
++   cbind(
++     after_2010$last.week, after_2010$peak, after_2010$weeks.on.chart, 
++     after_2010$entry.position, after_2010$artist.relevance), 
++     after_2010$overall.peak, 
++     nbest = 2
++ )
+
+Note: 
+   last.week        -> [1]
+   peak             -> [2]
+   weeks.on.chart   -> [3]
+   entry.position   -> [4]
+   artist.relevance -> [5]
+   
+Vars    R^2     R^2 (adj)   Mallows_Cp       S   [1]   [2]   [3]   [4]   [5]
+  1  71.69767   71.69663     648.16211   14.12          X
+  1  20.96479   20.96187   50380.51195    23.6                X
+  2  72.19368   72.19163     163.93464      14          X     X
+  2  71.76668   71.76460     582.51190    14.1          X                 X
+  3  72.32219   72.31913      39.95772   13.96          X     X           X
+  3  72.22284   72.21977     137.34667   13.99          X     X     X
+  4  72.34240   72.33832      22.14496   13.96          X     X     X     X
+  4  72.33920   72.33512      25.28558   13.95    X     X     X           X
+  5  72.36091   72.35581       6.00000   13.94    X     X     X     X     X
 \end{verbatim}
 
-\newpage
-\begin{verbatim}
-Coefficients:
-                  +-----------------+---------+---------+--------------+
-                  |  Estimate Std.  |  Error  | t value |   Pr(>|t|)   |
-   +--------------+-----------------+---------+---------+--------------+
-   |	 (Intercept) |    -7.47240     | 4.91626 |  -1.52  |    0.129 .   |
-   +--------------+-----------------+---------+---------+--------------+
-   |   CR_Score   |     1.00169     | 0.01214 |  82.49  |  <2e-16 ***  |
-   +--------------+-----------------+---------+---------+--------------+
-    ---
-    Signif. codes:  0 `***' 0.001 `**' 0.01 `*' 0.05 `.' 0.1 ` ' 1
-    ---
-	
-	Residual standard error: 14.14 on 418 degrees of freedom
-	Multiple R-squared: 0.9421,	    Adjusted R-squared: 0.942
-	F-statistic:  6804 on 1 and 418 DF,  p-value: < 2.2e-16
-------------------------------------------------------------------------------
-\end{verbatim}
-\[ \texttt{Average writing score} = \texttt{-7.4724} + \texttt{1.00169} \times \texttt{Average critical reading score} \]
-While the regression relationship is still very strong, our $\beta_1$ coefficient is almost insignificantly farther away from our hypothesized value of $\beta_1 = 1$. Looking to our prediction/confidence and diagnostic plots, we note that our confidence interval is still missing a few egregious data points, especially the observation ``GED PLUS s CITYWIDE'':
+Since we are interested not only in how each predictor influences our overall peak chart ranking but also \textit{which} predictors do so the best, we do not express any mandates for our subset algorithm to include any particular predictor. 
 
-%\begin{figure}[H]
-%	\label{Figure 6}
-%	\caption{Confidence and prediction interval plot for our regression model with a removed lower outlier ($o_1$)}
-%	\includegraphics[scale= 0.53]{o_1_removed_plots/fitted_line_plot_2012_altered}
-%	\centering
-%\end{figure}
-
-%\begin{figure}[H]
-%	\label{Figure 7}
-%	\caption{Normality plot with a removed lower outlier ($o_1$)}
-%	\includegraphics[scale = 0.53]{o_1_removed_plots/qq_2012_altered}
-%	\centering
-%\end{figure}
-
-%\begin{figure}[H]
-%	\label{Figure 8}
-%	\caption{Residuals vs fitted plot with a removed lower outlier ($o_1$)}
-%	\includegraphics[scale = 0.60]{o_1_removed_plots/residuals_vs_fitted_altered}
-%	\centering
-%\end{figure}
-
-\subsection*{Omitting $o_2$}
-Unfortunately, we can still observe outliers -- particularly within our prediction and confidence interval plot. What if were to re-add our previous outlier and instead remove the ``GED PLUS s CITYWIDE'' outlier from our regression? In order to omit this particular school, I modified my \textsc{R} script such that our dataframe \texttt{df} was assigned the rows of \texttt{df} where the \texttt{SCHOOL.NAME} field was not equal to ``GED PLUS s CITYWIDE''. \par
-Here's the scatterplot:
-
-%\begin{figure}[H]
-%	\label{Figure 9}
-%	\caption{Scatterplot of our reported scores, second outlier ($o_2$) removed, first outlier ($o_1$) intact}
-%	\includegraphics[scale=0.125]{o_2_removed_plots/read_v_write_2012_altered_2}
-%	\centering
-%\end{figure}
-
-And summary statistics from our regression:
+To choose our best model(s) we first go down the list, observing each subset models' $R^{2}$ value and at what $p$ does it begin to plateau. We note that our $R^{2}$ begins to level-off at approximately \\ \textbf{p = 3}. We then look to maximize our adjusted $R^{2}$, and find that our models' $R^{2}_{a}$ begins to taper off at \textbf{p = 3 or p = 4}. Next, we look to utilize a model whose $C_{p}$ criterion best satisfies $C_{p} \leq p + 1$ and/or minimize($C_{p}$). We note that when \textbf{p = 5}, both the minimum $C_{p}$ is found and $C_{p} \leq p + 1$ is closest to an exact fit. Lastly, we look to Akaike's information criterion and criterion corrected to determine our model selection. Let's look at our $AIC$ and $AIC_{c}$ values:
 
 \begin{verbatim}
-------------------------------------------------------------------------------
-Residuals:
-	  +---------+--------+----------+--------+---------+  
-	  |   Min   |   1Q   |  Median  |   3Q   |   Max   |
-	  +---------+--------+----------+--------+---------+  
-	  | -53.245 | -7.414 |  0.672   | 8.704  | 45.214  |
-	  +---------+--------+----------+--------+---------+ 
-	
-Coefficients:
-                  +-----------------+---------+---------+--------------+
-                  |  Estimate Std.  |  Error  | t value |   Pr(>|t|)   |
-   +--------------+-----------------+---------+---------+--------------+
-   |	 (Intercept) |    -9.16912     | 4.83471 |  -1.897 |    0.0586 .   |
-   +--------------+-----------------+---------+---------+--------------+
-   |   CR_Score   |     1.00613     | 0.01195 |  84.200 |  <2e-16 ***  |
-   +--------------+-----------------+---------+---------+--------------+
-    ---
-    Signif. codes:  0 `***' 0.001 `**' 0.01 `*' 0.05 `.' 0.1 ` ' 1
-    ---
-	
-    Residual standard error: 13.86 on 418 degrees of freedom
-    Multiple R-squared: 0.9443,    Adjusted R-squared: 0.9442 
-    F-statistic:  7090 on 1 and 418 DF,  p-value: < 2.2e-16
-------------------------------------------------------------------------------
+Vars          AIC                  AIC_c
+   1  -177761.78259715307    -177761.78171141347
+   1  -163841.7461900618     -163841.7453043222
+   2  -177991.07845354368    -177991.07697725654
+   2  -177798.19507700743    -177798.1936007203
+   3  -178066.61784835963    -178066.6156338472
+   3  -178008.4425129599     -178008.44029844747
+   4  -178064.61784835963    -178064.6147479278
+   4  -178084.0374120713     -178084.03431163947
+   5  -178101.47090160972    -178101.466767548
 \end{verbatim}
-\[ \text{Average writing score} = -9.16912 + 1.00613 \times \text{Average critical reading score}\]
 
-We notice that removing ``GED PLUS s CITYWIDE'' had a more dramatic effect than removing ``Queens Satellite High School for Opportunity'', but our omission actually brings our $\beta_1$ away from its ideal value of $1$ moreso than omitting ``Queens Satellite High School for Opportunity'' did. Thus, we note that the strength of the relationship between average writing score and average critical reading score has weakened. Let's look at the 95\% confidence/prediction interval plots and the diagnostic plots:
+We note that our minimum $AIC$ is seen when \textbf{p = 1}, and that our minimum $AIC_{c}$ value is also seen when \textbf{p = 1}.
 
-%\begin{figure}[H]
-%	\label{Figure 10}
-%	\caption{Confidence and prediction interval plot for our regression model with a removed lower outlier ($o_2$); previous outlier ($o_1$) intact}
-%	\includegraphics[scale= 0.53]{o_2_removed_plots/fitted_line_plot_2012_altered_2}
-%	\centering
-%\end{figure}
-
-%\begin{figure}[H]
-%	\label{Figure 11}
-%	\caption{Normality plot with a removed lower outlier ($o_2$); previous outlier ($o_1$) intact}
-%	\includegraphics[scale = 0.53]{o_2_removed_plots/qq_2012_altered_2}
-%	\centering
-%\end{figure}
-
-%\begin{figure}[H]
-%	\label{Figure 12}
-%	\caption{Residuals vs fitted plot with a removed lower outlier ($o_2$); previous outlier ($o_1$) intact}
-%	\includegraphics[scale = 0.60]{o_2_removed_plots/residuals_vs_fitted_altered_2}
-%	\centering
-%\end{figure}
-
-Given $o_2$'s more drastic influence upon our dataset, we arrive at the question: what happens to our linear regression if we remove both notable outliers?
-
-\subsection*{Omitting $o_1$ and $o_2$}
-Lastly, we're curious in what will happen to our regression line when we omit both outliers. In order to omit both observations, I modified my \textsc{R} script such that both previous one-line modifications were applied onto my dataframe \texttt{df}. \par
-Ideally, the omission of both outliers would provide a $\beta_1$ coefficient that is closer to our ideal value of $1$, and so we first look at our general scatterplot:
-
-%\begin{figure}[H]
-%	\label{Figure 13}
-%	\caption{Scatterplot of our reported scores both outliers ($o_1$, $o_2$) removed}
-%	\includegraphics[scale=0.11]{both_removed_plots/read_v_write_2012_altered_final}
-%	\centering
-%\end{figure}
-
-Followed by \textsc{R}'s summary statistics:
-
-\begin{verbatim}
-------------------------------------------------------------------------------
-Residuals:
-	  +---------+--------+----------+--------+---------+  
-	  |   Min   |   1Q   |  Median  |   3Q   |   Max   |
-	  +---------+--------+----------+--------+---------+  
-	  | -53.315 | -7.417 |  0.611   | 8.639  | 45.149  |
-	  +---------+--------+----------+--------+---------+ 
-\end{verbatim}
-\newpage
-\begin{verbatim}
-Coefficients:
-                  +-----------------+---------+---------+--------------+
-                  |  Estimate Std.  |  Error  | t value |   Pr(>|t|)   |
-   +--------------+-----------------+---------+---------+--------------+
-   |	 (Intercept) |    -9.1200     |  4.8146 |  -1.894 |    0.0589 .   |
-   +--------------+-----------------+---------+---------+--------------+
-   |   CR_Score   |     1.0062     |  0.0119 |  84.558 |  <2e-16 ***  |
-   +--------------+-----------------+---------+---------+--------------+
-    ---
-    Signif. codes:  0 `***' 0.001 `**' 0.01 `*' 0.05 `.' 0.1 ` ' 1
-    ---
-	
-    Residual standard error: 13.81 on 417 degrees of freedom
-    Multiple R-squared: 0.9449,    Adjusted R-squared: 0.9448 
-    F-statistic:  7150 on 1 and 417 DF,  p-value: < 2.2e-16
-------------------------------------------------------------------------------
-\end{verbatim}
-The summary of our linear regression results in the following regression equation:
-\[ \text{Average writing score} = -9.1200 + 1.0062 \times \text{Average critical reading score}\]
-
-We note a strong $R^{2}$ of 94.49\%, adjusted $R^{2}$ of 94.48\%, and very significant F-statistic of 7150. As usual, our $\beta_0$ does not hold much significance to our regression model due to the minimum score on each section being a 200. Our slope coefficient ($\beta_1$), however, implies that a one point increase in mean critical reading score is associated with an estimated expected 1.0062 point increase in our mean writing score.\par
-Lastly, let's take a look at our prediction/confidence interval and diagnostic plots:
-
-%\begin{figure}[H]
-%	\label{Figure 14}
-%	\caption{Fitted line plot of our reported scores where both outliers ($o_1$, $o_2$) have been removed}
-%	\includegraphics[scale=0.5]{both_removed_plots/fitted_line_plot_2012_altered_final}
-%	\centering
-%\end{figure}
-%
-%\begin{figure}[H]
-%	\label{Figure 15}
-%	\caption{Scatterplot of our reported scores both outliers ($o_1$, $o_2$) removed}
-%	\includegraphics[scale=0.5]{both_removed_plots/qq_normal_altered_final}
-%	\centering
-%\end{figure}
-
-%\begin{figure}[H]
-%	\label{Figure 16}
-%	\caption{Scatterplot of our residuals vs our fitted line plot where both outliers ($o_1$, $o_2$) are removed}
-%	\includegraphics[scale=0.5]{both_removed_plots/fitted_vs_residual_altered_final}
-%	\centering
-%\end{figure}
-
-We note that the confidence interval is narrower than in previous iterations, mostly due to the removal of two of the dataset's outliers. The Q-Q plot is much closer to showing an ideal distribution, with a slightly persistant left skew. Lastly, our plot  of fitted values with regards to residuals is getting closer and closer to having the slope center around 0. Our dataset contained a reasonable number of observations, although due to our particular analysis of the data -- our decision to base our writing score model around our critical reading score -- there aren't too many more paths to follow with regards to analyzing this dataset. 
-
+We unfortunately note that our available criterion do not seem to be approaching or suggesting any particular p. While our first two tests advocate for a p = 3 or p = 4, both p = 3 and p = 4 are far from being contenders for our fourth criterion where we attempt to reduce $C_{p}$. Our final two criterion seem to vote for a model where p = 1, which tells us that there doesn't seem to be any particularly-agreeable subset of predictors among our five that can serve as a simpler model for our regression.
 
 \section*{Summary}
-There seems to be a strong case in support of my assertion that the \textit{College Board} unfairly weighs the humanities on the SAT. Despite removing two outstanding outliers, our final regression model is incredibly close to our ideal model. With regards to our real-world problem, we can safely say that the SAT should restructure their exam in order to ensure an equal weighing of sections with respect to the other sections. \par
-Understanding the weaknesses of a nationally-recognized standardized exam is vital to test-takers, educators, and the broader educational community. Should the \textit{College Board} consider redesigning their SAT exam, it would be sensible to consider adopting a subject structure that is more varied -- like the ACT's, whose four test sections (Science, Mathematics, English, Reading) not only span a wider variety of topics, but are also committed to evaluating a student equally between the more numerical/analytical and creative/humanties sections. \par
-Despite our model's relative simplicity, I do feel that a simple linear regression model that utilizes critical reading score is more representative of an SAT test taker's performance on the writing section than a more involved, complex linear regression model that includes the mathematics section and other auxiliary features. Ideally, our results would have been more transparent if the dataset did not contain the averaged score of all college-bound seniors per observation -- rather, if each row contained a college-bound senior's scores, I strongly believe our data would have avoided any influences stemming from the mean. Furthermore, it would have been more ideal if our dataset had scores distributed across the past few years in order to be sure that the 2012 SAT exam was not just an anomaly within the history of SAT exams but that also would have proven much more difficult for a simple linear regression. \par
-From this analysis, I've learned both peripheral skills and more directly-applied skills. Peripherally, the data collection and exploration phases of the analysis were useful in building data extraction and interpretation skills. While validating and cleaning my data in \textsc{R}, however, I gained more directly-applied skills with regards to programming, file I/O, and data visualization. During the data analysis and statistical reporting phase, there were instances where I was unsure as to how I should have approached this problem and, on numerous occassions, I considered restarting my analysis with a modified regression model or different dataset altogether. Ultimately, I learned more about statistical reporting and the data modeling/analysis process (going from question $\rightarrow$ data $\rightarrow$ model $\rightarrow$ analysis $\rightarrow$ results).
+Despite our best efforts, there does not seem to be a strong case in support of the notion that our 5 predictors can confidently predict a song's overall peak ranking on the billboard top 100. One potential explanation for this is, as previously mentioned, new artists who are making their debut into the top 100 are harshly penalized and their rank is weighed down considerably. Furthermore, it could be that the data aggregated by the billboard top 100 just isn't a sufficient or thorough representation of how the public ranks artists. Given that popular musicians are not just musicians and celebrities but social media icons, actors, and more, it is more likely that there are greater forces at work that impact a particular artist's song's ranking.
+
+I had intended on including another calculated predictor, \texttt{concurrent\_count}, which would tell us the number of songs a particular artist that were already within the top 100 for any particular chart spanning the time frame. Unfortunately, RStudio crashed and it would have meant this submission being late if I had decided to re-run the calculations (for reference, the calculation for just the post-2012 charts had already taken 6.5 hours). After submitting this report, I will try calculating this predictor and personally noting if \texttt{concurrent\_count} significantly contributes to our regression fit.
+
+This analysis proved considerably more difficult than my previous analysis. In particular, attempting to calculatie \texttt{concurrent\_count} required quite a bit of trial and error, and despite optimizing my code for performance, just computing those two predictors for the partially-incomplete decade/dataset \texttt{after\_2010} took hours to run.
+
+That said, I gained a much better understanding of R's internal data structure utilization and programming schema/syntax. Unlike my previous analysis, this report's prototyping/data exploration phase was more about understanding the underlying trends within the data and not as hindered by my unfamiliarity with R as a tool for data analysis. Ultimately, I learned more about statistical reporting and, in particular, the data modeling process -- that is, going from question $\rightarrow$ data $\rightarrow$ model $\rightarrow$ validation $\rightarrow$ analysis $\rightarrow$ results.
+
+In retrospect, had our regression been more useful and described our data more wholly, it would have been ideal to cross-validate our regression model on other decades of our billboard data.
 
 %----------------------------------------------------------------------------------------
 % Resources
 %----------------------------------------------------------------------------------------
 \subsection*{Resources}
-All files pertaining to this statistical report, including the \texttt{R} data analysis script, dataset, plots, and this PDF write-up are open to the public and hosted on GitHub (\href{https://github.com/dannyfig/MultivaRiate/tree/master/Problem_Set_1/}{\url{github.com/dannyfig/multivariate/problem_set_1}}).
+All files pertaining to this statistical report, including the \texttt{R} data analysis script, dataset, plots, and this PDF report are open to the public and hosted on GitHub (\href{https://github.com/dannyfig/MultivaRiate/tree/master/Multiple_Linear_Regression}{\url{github.com/dannyfig/multivariate/multiple_linear_regression}}).
 
 %----------------------------------------------------------------------------------------
 % Data
@@ -423,8 +389,8 @@ All files pertaining to this statistical report, including the \texttt{R} data a
 \subsection*{Data}
 Below is a slice (\textbf{pivoted in order to fit}) of the billboard dataset I utilized for this statistical analysis report. A few points to note are as follow:
 \begin{enumerate}
-	\item Originally, the parsed dataset provided 10 relevant features. Notably: \textbf{last week} (song's position last week, if applicable), \textbf{peak} (song's billboard peak), \textbf{weeks on chart}, \textbf{title}, \textbf{artist}, \textbf{chart entry date}, \textbf{entry position}, \textbf{overall weeks on chart}, \textbf{chart date} (date that data was recorded in YYYYMMDD format).
-	\item Through some engineering within my \texttt{regression\_analysis.R} script, I was able to add a few more columns, including: \textbf{artist appearances} (how many times an artist was on the billboard for that recorded entry), FILL THIS IN
+	\item Originally, the parsed dataset provided 10 relevant features. Notably: \textbf{last week} (song's position last week, if applicable), \textbf{peak} (song's current billboard peak), \textbf{weeks on chart}, \textbf{title}, \textbf{artist}, \textbf{chart entry date}, \textbf{entry position}, \textbf{song's overall peak}, \textbf{overall weeks on chart}, \textbf{chart date} (date that data was recorded in YYYYMMDD format).
+	\item Through some engineering within my \texttt{regression\_analysis.R} script, I was able to add an extra column, \textbf{relevance\_score}, which represented how many unique songs that artist had released in a set time frame (default: per decade).
 \end{enumerate}
 
 \begin{table}[H]
@@ -441,7 +407,7 @@ Below is a slice (\textbf{pivoted in order to fit}) of the billboard dataset I u
 		overall peak           & 1 & 2 \\
 		overall weeks on chart & 15 & 20 \\
 		chart date             & 20150307 & 20150307 \\
-		artist appearances     & FILL THIS IN & FILL THIS IN\\
+		artist relevance       & 1 & 11
 	\end{tabular}
 \end{table}
 
