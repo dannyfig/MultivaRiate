@@ -31,9 +31,7 @@ route.
 
 #### Retrospective
 Again, I really got a great appreciation for R through this project. While doing some late-night troubleshooting I was exposed to tons of
-resources for improving my "data analysis with R"-game, including things like (R Markdown)[http://rmarkdown.rstudio.com/] and (Learning R)[https://github.com/pawelmb57/LearningR],
-which I'll hope to incorporate into future assignments. This time I didn't adapt any R code from outside sources, and ggplot2 is still a
-mystery to me -- but that'll change soon enough.
+resources for improving my "data analysis with R"-game, including things like [R Markdown](http://rmarkdown.rstudio.com/) and [Learning R](https://github.com/pawelmb57/LearningR), which I'll hope to incorporate into future assignments. This time I didn't adapt any R code from outside sources, and ggplot2 is still a mystery to me -- but that'll change soon enough.
 
 For information regarding my analysis, feel free to check out my statistical report! It's the only PDF in this subdirectory (Report.PDF, although you might want to spare GitHub's online file viewer and clone the repo to look at it locally).
 
